@@ -1,0 +1,11 @@
+Rapport de cette semaine : 
+
+Intégration de la Bing Maps : 
+	Suite au manque d'informations concernant l'intégration de la Bing Maps, nous avons finalment laissé
+	tomber pour nous concentrer sur une varainte de la Google Maps : MapBox. 
+
+Pour l'instant, nous n'avons pas totalement réussi à l'intégrer, parce qu'il s'y trouve encore quelques bugs
+dans le code que nous n'avons pas encore réussi à résoudre. 
+
+Ainsi donc, notre objectif est de résoudre ces problèmes et pouvoir réussir à intégrer la MapBox au sein du 
+projet. Des réunions d'équipe seront mises en place au cours de cette semaine afin de pallier à ce problème. 
