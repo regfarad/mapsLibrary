@@ -9,3 +9,5 @@ dans le code que nous n'avons pas encore réussi à résoudre.
 
 Ainsi donc, notre objectif est de résoudre ces problèmes et pouvoir réussir à intégrer la MapBox au sein du 
 projet. Des réunions d'équipe seront mises en place au cours de cette semaine afin de pallier à ce problème. 
+
+skjhskjhsqkds
