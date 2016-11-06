@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -43,6 +44,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
+    private String origin = "";
+    private String destination = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,24 +68,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+<<<<<<< HEAD
     // demande
+=======
+    public String getOrigin () {
+        return this.origin;
+    }
+    public String getDestination() {
+        return this.destination;
+    }
+    public void setOrigin(String o) {
+        this.origin = o;
+    }
+    public void setDestination(String d) {
+        this.destination = d;
+    }
+
+
+>>>>>>> origin/master
     private void sendRequest() {
-        String origin = etOrigin.getText().toString();
-        String destination = etDestination.getText().toString();
-        if (origin.isEmpty()) {
+        this.setOrigin(etOrigin.getText().toString());
+        this.setDestination(etDestination.getText().toString());
+
+        if (this.getOrigin().isEmpty()) {
             Toast.makeText(this, "Veuillez entrer l'adresse d'origine SVP", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (destination.isEmpty()) {
+        if (this.getDestination().isEmpty()) {
             Toast.makeText(this, "Veuillez entrer l'adresse de destination SVP", Toast.LENGTH_SHORT).show();
             return;
         }
 
         try {
-            new DirectionFinder(this, origin, destination).execute();
+            new DirectionFinder(this, this.getOrigin(), this.getDestination()).execute();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        Toast.makeText(this, "Adresses rentrées : " +this.getOrigin() +";" +this.getDestination(), Toast.LENGTH_LONG).show();
     }
 
     @Override

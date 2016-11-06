@@ -1,0 +1,14 @@
+ATTENTION a la présentation (mardi matin 9h00 et mercredi aprem) : 
+
+- Libraire représentant la cartographie
+- Nom de produit à présenter et à vendre 
+- Nom du groupe
+- Quelle que soit la techno de cartographie, les utiliser ensemble, 
+  mais TRANPARENCE;
+- Si on est en fr rester du debut à la fin en fr
+- Dans la présentation, garder la meme transition du début à la fin.
+- Pas trop d'animations
+- Si Android Studio, expliquer ce que c'est. 
+- "A implémenter" 
+- Travail sur le logo, et sur le look.
+- elevator speech (3 types de visions : invest, prof, others).
