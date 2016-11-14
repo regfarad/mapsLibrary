@@ -68,9 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-<<<<<<< HEAD
-    // demande
-=======
+
     public String getOrigin () {
         return this.origin;
     }
@@ -85,7 +83,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
->>>>>>> origin/master
     private void sendRequest() {
         this.setOrigin(etOrigin.getText().toString());
         this.setDestination(etDestination.getText().toString());
