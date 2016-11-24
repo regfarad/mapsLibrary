@@ -101,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        Toast.makeText(this, "Adresses rentrées : " +this.getOrigin() +";" +this.getDestination(), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Adresses rentrées : " +this.getOrigin() +"\n" +this.getDestination(), Toast.LENGTH_LONG).show();
     }
 
     @Override
