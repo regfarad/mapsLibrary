@@ -12,6 +12,7 @@ import Modules.Weather;
  */
 
 public class JSONWeatherParser {
+
     public static Weather getWeather(String data) throws JSONException {
         Weather weather = new Weather();
 
