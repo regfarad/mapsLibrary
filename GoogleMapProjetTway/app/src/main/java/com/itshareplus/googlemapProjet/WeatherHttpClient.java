@@ -24,7 +24,7 @@ public class WeatherHttpClient {
             con = (HttpURLConnection) ( new URL(BASE_URL + location +"&APPID=15465764f27967f3a35eb5f7797b9811")).openConnection();
             con.setRequestMethod("GET");
             con.setDoInput(true);
-            con.setDoOutput(true);
+            con.setDoOutput(false);
             con.connect();
 
             // Let's read the response
@@ -58,7 +58,7 @@ public class WeatherHttpClient {
             con = (HttpURLConnection) ( new URL(IMG_URL + code+".png")).openConnection();
             con.setRequestMethod("GET");
             con.setDoInput(true);
-            con.setDoOutput(true);
+            con.setDoOutput(false);
             con.connect();
 
             // Let's read the response
