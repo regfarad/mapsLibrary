@@ -18,7 +18,7 @@ import Modules.Weather;
 
 public class MeteoActivity extends AppCompatActivity {
     private ImageView imgView;
-    private TextView cityText;
+    //private TextView cityText;
     private TextView condDescr, temp, hum, press;
     private Button back;
     private String city;
@@ -31,7 +31,7 @@ public class MeteoActivity extends AppCompatActivity {
         city = MapsActivity.curLocality;
 
         imgView = (ImageView) findViewById(R.id.meteoIcon);
-        cityText = (TextView) findViewById(R.id.cityText);
+        //cityText = (TextView) findViewById(R.id.cityText);
         condDescr = (TextView) findViewById(R.id.tvCond);
         temp = (TextView) findViewById(R.id.tvTemp);
         hum = (TextView) findViewById(R.id.tvHumidity);
@@ -80,7 +80,7 @@ public class MeteoActivity extends AppCompatActivity {
                 imgView.setImageBitmap(img);
             }
 
-            cityText.setText(city + "," + weather.locationW.getCountry());
+            //cityText.setText(city + "," + weather.locationW.getCountry());
             condDescr.setText(weather.currentCondition.getCondition() + "(" + weather.currentCondition.getDescr() + ")");
             temp.setText("" + Math.round((weather.temperature.getTemp() - 273.15)) + "°C");
             hum.setText("" + weather.currentCondition.getHumidity() + "%");
