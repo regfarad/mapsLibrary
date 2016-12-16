@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">GoogleMapDemo</string>
+    <string name="title_activity_maps">MapiGit</string>
+    <string-array name="choicelist">
+        <item>Je cherche..</item>
+        <item>Toilettes</item>
+        <item>ATM</item>
+        <item>Banque</item>
+        <item>Bureau de poste</item>
+        <item>Boulangerie</item>
+        <item>Bar</item>
+        <item>Banc public</item>
+        <item>Vilo/Velib</item>
+        <item>Café</item>
+        <item>Fastfood</item>
+        <item>Pompe à essence</item>
+        <item>Parking</item>
+        <item>Pharmacie</item>
+        <item>Métro</item>
+        <item>Supermarché</item>
+    </string-array>
+</resources>
