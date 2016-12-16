@@ -3,6 +3,7 @@ package com.itshareplus.googlemapProjet;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -53,15 +54,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button btnMeteo;
     private EditText etOrigin;
     private EditText etDestination;
-    private ImageView imgView;
-    private TextView temp;
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
     private double lat;
     private double lng;
-    private String curLocality;
+    public static String curLocality;
 
     public double getLat() {
         return lat;
@@ -89,8 +88,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnMeteo = (Button) findViewById(R.id.btnMeteo);
         etOrigin = (EditText) findViewById(R.id.etOrigin);
         etDestination = (EditText) findViewById(R.id.etDestination);
-        imgView = (ImageView) findViewById(R.id.condIcon);
-        temp = (TextView) findViewById(R.id.valTemp);
         btnFindPath.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,47 +98,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onClick(View v) {
-                showMeteo();
+                Intent i = new Intent(getApplicationContext(), MeteoActivity.class);
+                startActivity(i);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
     }
 
-    private class JSONWeatherTask extends AsyncTask<String, Void, Weather> {
 
-        @Override
-        protected Weather doInBackground(String... params) {
-            Weather weather = new Weather();
-            String data = ( (new WeatherHttpClient()).getWeatherData(params[0]));
-
-            try {
-                weather = JSONWeatherParser.getWeather(data);
-
-                // Let's retrieve the icon
-                weather.iconData = ( (new WeatherHttpClient()).getImage(weather.currentCondition.getIcon()));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return weather;
-        }
-
-        @Override
-        protected void onPostExecute(Weather weather) {
-            super.onPostExecute(weather);
-
-            if (weather.iconData != null && weather.iconData.length > 0) {
-                Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
-                imgView.setImageBitmap(img);
-            }
-
-            //cityText.setText(weather.locationW.getCity() + "," + weather.locationW.getCountry());
-            //condDescr.setText(weather.currentCondition.getCondition() + "(" + weather.currentCondition.getDescr() + ")");
-            temp.setText("" + Math.round((weather.temperature.getTemp() - 273.15)) + "°C");
-            //hum.setText("" + weather.currentCondition.getHumidity() + "%");
-            //press.setText("" + weather.currentCondition.getPressure() + " hPa");
-
-        }
-    }
 
     private void sendRequest() {
         String origin = etOrigin.getText().toString();
@@ -160,11 +124,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-    }
-
-    private void showMeteo() {
-        JSONWeatherTask task = new JSONWeatherTask();
-        task.execute(new String[]{this.curLocality});
     }
 
     @Override
