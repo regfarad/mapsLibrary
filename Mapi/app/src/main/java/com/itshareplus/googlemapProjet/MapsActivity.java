@@ -77,7 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double lat;
     private double lng;
     public static String curLocality;
-    public static AmenimapsItem test[] = new AmenimapsItem[10];
+    public static AmenimapsItem dataAmenities[] = new AmenimapsItem[10];
 
     public double getLat() {
         return lat;
@@ -181,8 +181,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     double lat = finalObject.getDouble("latitude");
                     double lng = finalObject.getDouble("longitude");
                     /*amenimapsData.add(new AmenimapsItem(lat,lng));*/
-                    test[i].setLat(lat);
-                    test[i].setLng(lng);
+                    dataAmenities[i].setLat(lat);
+                    dataAmenities[i].setLng(lng);
                 }
 
 
@@ -211,9 +211,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Marker marker = mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(amenimapsData.get(i).getLat(), amenimapsData.get(i).getLng()))
                         .title(""+ SpinnerValue));*/
-            for(int i = 0; i <= test.length; i++){
+            for(int i = 0; i <= dataAmenities.length; i++){
                 Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(test[i].getLat(), test[i].getLng()))
+                        .position(new LatLng(dataAmenities[i].getLat(), dataAmenities[i].getLng()))
                         .title(""+ SpinnerValue));
             }
         }
