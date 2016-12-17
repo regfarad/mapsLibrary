@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -76,6 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double lat;
     private double lng;
     public static String curLocality;
+    public static AmenimapsItem test[] = new AmenimapsItem[10];
 
     public double getLat() {
         return lat;
@@ -134,7 +136,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     SpinnerValue = amenimapSpinner.getSelectedItem().toString();
                     new JSONAmenimapsTask().execute("http://amenimaps.com/amenimapi.php?amenity="+SpinnerValue+"&mylat=50.8504500&mylon=4.3487800&mode=json&name=ruky91&key=cfee105e7cddd0a5563057b9a547dcc5");
 
-
                 } else {
                     Context context = getApplicationContext();
                     CharSequence text = "Veuillez choisir un objet valide...";
@@ -179,7 +180,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     JSONObject finalObject = parentArray.getJSONObject(i);
                     double lat = finalObject.getDouble("latitude");
                     double lng = finalObject.getDouble("longitude");
-                    amenimapsData.add(new AmenimapsItem(lat,lng));
+                    /*amenimapsData.add(new AmenimapsItem(lat,lng));*/
+                    test[i].setLat(lat);
+                    test[i].setLng(lng);
                 }
 
 
@@ -203,10 +206,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             return null;
         }
-        protected void onPostExecute(ArrayList<AmenimapsItem> a) {
-            for(int i = 0; i <= a.size(); i++){
+        protected void onPostExecute() {
+           /* for(int i = 0; i <= amenimapsData.size(); i++){
                 Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(a.get(i).getLat(), a.get(i).getLng()))
+                        .position(new LatLng(amenimapsData.get(i).getLat(), amenimapsData.get(i).getLng()))
+                        .title(""+ SpinnerValue));*/
+            for(int i = 0; i <= test.length; i++){
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(test[i].getLat(), test[i].getLng()))
                         .title(""+ SpinnerValue));
             }
         }
