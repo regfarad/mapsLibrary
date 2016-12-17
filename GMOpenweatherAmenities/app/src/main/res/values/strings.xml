@@ -3,8 +3,8 @@
     <string name="title_activity_maps">MapiGit</string>
     <string-array name="choicelist">
         <item>Je cherche..</item>
-        <item>Toilettes</item>
-        <item>ATM</item>
+        <item>toilet</item>
+        <item>atm</item>
         <item>Banque</item>
         <item>Bureau de poste</item>
         <item>Boulangerie</item>

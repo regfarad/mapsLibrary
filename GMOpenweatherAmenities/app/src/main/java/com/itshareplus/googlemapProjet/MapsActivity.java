@@ -63,12 +63,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<Marker> destinationMarkers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
     private ProgressDialog progressDialog;
-    private double lat;
-    private double lng;
+    public static double lat;
+    public static double lng;
     public static String curLocality;
     public static AmenimapsItem response = new AmenimapsItem();
 
-    public double getLat() {
+    /*public double getLat() {
         return lat;
     }
 
@@ -83,7 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void setLng(double lng) {
         this.lng = lng;
     }
-
+*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,13 +145,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private class JSONAmenimapsTask extends AsyncTask<String, Void, AmenimapsItem> {
 
-        LatLng test2 = new LatLng(50.8504500, 4.3487800);
-        double lat = test2.latitude;
-        double lng = test2.longitude;
+        LatLng test2 = new LatLng(lat, lng);
+        double latAmeni = test2.latitude;
+        double lngAmeni = test2.longitude;
 
         @Override
         protected AmenimapsItem doInBackground(String... params) {
-            String data = ((new AmenimapsHttpClient()).getAmenimapsData(params[0], lat, lng));
+            String data = ((new AmenimapsHttpClient()).getAmenimapsData(params[0], latAmeni, lngAmeni));
 
             try {
                 response = JSONAmenimapsParser.getItems(data);
@@ -213,8 +213,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     user = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
                     curLat = (double) user.get(0).getLatitude();
                     curLng = (double) user.get(0).getLongitude();
-                    this.setLat(curLat);
-                    this.setLng(curLng);
+                    //this.setLat(curLat);
+                    //this.setLng(curLng);
+                    lat = curLat;
+                    lng = curLng;
                     curLocality = user.get(0).getLocality();
 
                 } catch (Exception e) {
@@ -223,7 +225,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
             mMap = googleMap;
-            LatLng hcmus = new LatLng(this.getLat(), this.getLng());
+            LatLng hcmus = new LatLng(lat, lng);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hcmus, 10));
             originMarkers.add(mMap.addMarker(new MarkerOptions()
                     .title("Votre position")
