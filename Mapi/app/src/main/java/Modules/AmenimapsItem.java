@@ -7,8 +7,8 @@ import com.google.android.gms.maps.model.LatLng;
  */
 
 public class AmenimapsItem {
-    public double lat;
-    public double lng;
+    private double lat;
+    private double lng;
 
     public AmenimapsItem(double lat, double lng) {
         this.lat = lat;

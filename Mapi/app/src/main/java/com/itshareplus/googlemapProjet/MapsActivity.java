@@ -13,10 +13,12 @@ import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,6 +29,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -66,8 +72,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private Button btnFindPath;
     private Button btnMeteo;
-    public  String SpinnerValue;
-    public static ArrayList<AmenimapsItem> amenimapsData = new ArrayList<>();
+    public String SpinnerValue;
+    //public static ArrayList<AmenimapsItem> amenimapsData = new ArrayList<>();
     private EditText etOrigin;
     private EditText etDestination;
     private List<Marker> originMarkers = new ArrayList<>();
@@ -77,7 +83,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double lat;
     private double lng;
     public static String curLocality;
-    public static AmenimapsItem dataAmenities[] = new AmenimapsItem[10];
+    public static AmenimapsItem[] dataAmenities = new AmenimapsItem[10];
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     public double getLat() {
         return lat;
@@ -132,9 +143,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                JSONAmenimapsTask task = new JSONAmenimapsTask();
+                String url_adress;
+
                 if (pos > 0) {
                     SpinnerValue = amenimapSpinner.getSelectedItem().toString();
-                    new JSONAmenimapsTask().execute("http://amenimaps.com/amenimapi.php?amenity="+SpinnerValue+"&mylat=50.8504500&mylon=4.3487800&mode=json&name=ruky91&key=cfee105e7cddd0a5563057b9a547dcc5");
+                    url_adress = "http://amenimaps.com/amenimapi.php?amenity=" + SpinnerValue + "&mylat=50.8504500&mylon=4.3487800&mode=json&name=ruky91&key=cfee105e7cddd0a5563057b9a547dcc5";
+                    task.execute(new String[]{url_adress});
 
                 } else {
                     Context context = getApplicationContext();
@@ -151,6 +166,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Maps Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 
     private class JSONAmenimapsTask extends AsyncTask<String, String, String> {
@@ -159,8 +213,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         protected String doInBackground(String... params) {
             HttpURLConnection connection = null;
             BufferedReader reader = null;
+            AmenimapsItem[] tab = new AmenimapsItem[10];
 
-            try{
+            try {
                 URL url = new URL(params[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
@@ -169,184 +224,189 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 reader = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer buffer = new StringBuffer();
                 String line = "";
-                while((line = reader.readLine()) != null){
+                while ((line = reader.readLine()) != null) {
                     buffer.append(line);
                 }
 
-                String AmenimapsData = buffer.toString();
-                JSONObject parentObject = new JSONObject(AmenimapsData);
+                String amenimapsData = buffer.toString();
+                Log.d("Debug", amenimapsData);
+                JSONObject parentObject = new JSONObject(amenimapsData);
                 JSONArray parentArray = parentObject.getJSONArray("markers");
-                for(int i = 0; i <= parentArray.length(); i++){
-                    JSONObject finalObject = parentArray.getJSONObject(i);
-                    double lat = finalObject.getDouble("latitude");
-                    double lng = finalObject.getDouble("longitude");
+                JSONObject finalObject;
+                double lat, lng;
+                for (int i = 0; i < parentArray.length(); i++) {
+                    finalObject = parentArray.getJSONObject(i);
+                    lat = finalObject.getDouble("latitude");
+                    lng = finalObject.getDouble("longitude");
                     /*amenimapsData.add(new AmenimapsItem(lat,lng));*/
-                    dataAmenities[i].setLat(lat);
-                    dataAmenities[i].setLng(lng);
+                    dataAmenities[i] = new AmenimapsItem(lat, lng);
                 }
-
+                return amenimapsData;
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-            } catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
-            } finally{
-                if(connection != null){
+            } finally {
+                if (connection != null) {
                     connection.disconnect();
                 }
-                if(reader != null) {
-                    try{
+                if (reader != null) {
+                    try {
                         reader.close();
-                    }catch(IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             }
             return null;
         }
-        protected void onPostExecute() {
-           /* for(int i = 0; i <= amenimapsData.size(); i++){
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(amenimapsData.get(i).getLat(), amenimapsData.get(i).getLng()))
-                        .title(""+ SpinnerValue));*/
-            for(int i = 0; i <= dataAmenities.length; i++){
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(dataAmenities[i].getLat(), dataAmenities[i].getLng()))
-                        .title(""+ SpinnerValue));
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            for(int i = 0; i < dataAmenities.length; i++){
+            mMap.addMarker(new MarkerOptions()
+                    .title("" + SpinnerValue)
+                    .position(new LatLng(dataAmenities[i].getLat(), dataAmenities[i].getLng())));
             }
+
+        }
+
+    }
+
+    private void sendRequest() {
+
+        String origin = etOrigin.getText().toString();
+        String destination = etDestination.getText().toString();
+        if (origin.isEmpty()) {
+            Toast.makeText(this, "Veuillez entrer l'adresse d'origine SVP", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (destination.isEmpty()) {
+            Toast.makeText(this, "Veuillez entrer l'adresse de destination SVP", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            new DirectionFinder(this, origin, destination).execute();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 
-        private void sendRequest() {
-            String origin = etOrigin.getText().toString();
-            String destination = etDestination.getText().toString();
-            if (origin.isEmpty()) {
-                Toast.makeText(this, "Veuillez entrer l'adresse d'origine SVP", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (destination.isEmpty()) {
-                Toast.makeText(this, "Veuillez entrer l'adresse de destination SVP", Toast.LENGTH_SHORT).show();
-                return;
-            }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
 
+        Geocoder geocoder;
+        String bestProvider;
+        double curLat, curLng;
+        List<Address> user = null;
+
+        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        Criteria criteria = new Criteria();
+        bestProvider = lm.getBestProvider(criteria, false);
+        Location location = lm.getLastKnownLocation(bestProvider);
+
+        if (location == null) {
+            Toast.makeText(this, "Location Not found", Toast.LENGTH_LONG).show();
+        } else {
+            geocoder = new Geocoder(this);
             try {
-                new DirectionFinder(this, origin, destination).execute();
-            } catch (UnsupportedEncodingException e) {
+                user = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                curLat = (double) user.get(0).getLatitude();
+                curLng = (double) user.get(0).getLongitude();
+                this.setLat(curLat);
+                this.setLng(curLng);
+                curLocality = user.get(0).getLocality();
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        LatLng hcmus = new LatLng(this.getLat(), this.getLng());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hcmus, 10));
+        originMarkers.add(mMap.addMarker(new MarkerOptions()
+                .title("Votre position")
+                .position(hcmus)));
 
-            Geocoder geocoder;
-            String bestProvider;
-            double curLat, curLng;
-            List<Address> user = null;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        Toast.makeText(this, "Localité actuelle : " + curLocality, Toast.LENGTH_LONG).show();
+    }
 
-            LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+    @Override
+    public void onDirectionFinderStart() {
+        progressDialog = ProgressDialog.show(this, "Veuillez patientez",
+                "Nous cherchons la direction..!", true);
 
-            Criteria criteria = new Criteria();
-            bestProvider = lm.getBestProvider(criteria, false);
-            Location location = lm.getLastKnownLocation(bestProvider);
-
-            if (location == null) {
-                Toast.makeText(this, "Location Not found", Toast.LENGTH_LONG).show();
-            } else {
-                geocoder = new Geocoder(this);
-                try {
-                    user = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                    curLat = (double) user.get(0).getLatitude();
-                    curLng = (double) user.get(0).getLongitude();
-                    this.setLat(curLat);
-                    this.setLng(curLng);
-                    curLocality = user.get(0).getLocality();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        if (originMarkers != null) {
+            for (Marker marker : originMarkers) {
+                marker.remove();
             }
+        }
 
-            mMap = googleMap;
-            LatLng hcmus = new LatLng(this.getLat(), this.getLng());
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hcmus, 10));
+        if (destinationMarkers != null) {
+            for (Marker marker : destinationMarkers) {
+                marker.remove();
+            }
+        }
+
+        if (polylinePaths != null) {
+            for (Polyline polyline : polylinePaths) {
+                polyline.remove();
+            }
+        }
+    }
+
+    @Override
+    public void onDirectionFinderSuccess(List<Route> routes) {
+        progressDialog.dismiss();
+        polylinePaths = new ArrayList<>();
+        originMarkers = new ArrayList<>();
+        destinationMarkers = new ArrayList<>();
+
+        for (Route route : routes) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
+            ((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
+            ((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
+
             originMarkers.add(mMap.addMarker(new MarkerOptions()
-                    .title("Votre position")
-                    .position(hcmus)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
+                    .title(route.startAddress)
+                    .position(route.startLocation)));
+            destinationMarkers.add(mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
+                    .title(route.endAddress)
+                    .position(route.endLocation)));
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            mMap.setMyLocationEnabled(true);
-            Toast.makeText(this, "Localité actuelle : " + curLocality, Toast.LENGTH_LONG).show();
+            PolylineOptions polylineOptions = new PolylineOptions().
+                    geodesic(true).
+                    color(Color.RED).
+                    width(10);
+
+            for (int i = 0; i < route.points.size(); i++)
+                polylineOptions.add(route.points.get(i));
+
+            polylinePaths.add(mMap.addPolyline(polylineOptions));
         }
+    }
 
-        @Override
-        public void onDirectionFinderStart() {
-            progressDialog = ProgressDialog.show(this, "Veuillez patientez",
-                    "Nous cherchons la direction..!", true);
-
-            if (originMarkers != null) {
-                for (Marker marker : originMarkers) {
-                    marker.remove();
-                }
-            }
-
-            if (destinationMarkers != null) {
-                for (Marker marker : destinationMarkers) {
-                    marker.remove();
-                }
-            }
-
-            if (polylinePaths != null) {
-                for (Polyline polyline : polylinePaths) {
-                    polyline.remove();
-                }
-            }
-        }
-
-        @Override
-        public void onDirectionFinderSuccess(List<Route> routes) {
-            progressDialog.dismiss();
-            polylinePaths = new ArrayList<>();
-            originMarkers = new ArrayList<>();
-            destinationMarkers = new ArrayList<>();
-
-            for (Route route : routes) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(route.startLocation, 16));
-                ((TextView) findViewById(R.id.tvDuration)).setText(route.duration.text);
-                ((TextView) findViewById(R.id.tvDistance)).setText(route.distance.text);
-
-                originMarkers.add(mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue))
-                        .title(route.startAddress)
-                        .position(route.startLocation)));
-                destinationMarkers.add(mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green))
-                        .title(route.endAddress)
-                        .position(route.endLocation)));
-
-                PolylineOptions polylineOptions = new PolylineOptions().
-                        geodesic(true).
-                        color(Color.RED).
-                        width(10);
-
-                for (int i = 0; i < route.points.size(); i++)
-                    polylineOptions.add(route.points.get(i));
-
-                polylinePaths.add(mMap.addPolyline(polylineOptions));
-            }
-        }
 }
 
 
