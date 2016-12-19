@@ -2,21 +2,21 @@
     <string name="app_name">GoogleMapDemo</string>
     <string name="title_activity_maps">MapiGit</string>
     <string-array name="choicelist">
-        <item>Je cherche..</item>
-        <item>toilet</item>
+        <item>Je cherche...</item>
+        <item>toilette</item>
         <item>atm</item>
-        <item>bank</item>
-        <item>postoffice</item>
-        <item>bakery</item>
-        <item>bar</item>
-        <item>bench</item>
-        <item>bicyclerental</item>
-        <item>bafe</item>
-        <item>fastfood</item>
-        <item>fuel</item>
+        <item>banque</item>
         <item>parking</item>
-        <item>pharmacy</item>
-        <item>subwayentrance</item>
-        <item>supermarket</item>
+        <item>bureau de poste</item>
+        <item>supermarché</item>
+        <!--<item>bakery</item>-->
+        <!--<item>bar</item>-->
+        <!--<item>bench</item>-->
+        <!--<item>bicyclerental</item>-->
+        <!--<item>bafe</item>-->
+        <!--<item>fastfood</item>-->
+        <!--<item>fuel</item>-->
+        <!--<item>pharmacy</item>-->
+        <!--<item>subwayentrance</item>-->
     </string-array>
 </resources>

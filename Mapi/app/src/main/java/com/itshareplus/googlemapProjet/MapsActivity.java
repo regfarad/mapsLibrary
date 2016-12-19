@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Criteria;
@@ -24,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,7 +51,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -62,10 +58,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Modules.AmenimapsItem;
+import Modules.AmenitiesAtm;
+import Modules.AmenitiesBank;
+import Modules.AmenitiesParking;
+import Modules.AmenitiesToilet;
 import Modules.DirectionFinder;
 import Modules.DirectionFinderListener;
 import Modules.Route;
-import Modules.Weather;
+
+import static android.support.v7.appcompat.R.id.info;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, DirectionFinderListener {
 
@@ -84,27 +85,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double lng;
     public static String curLocality;
     public static AmenimapsItem[] dataAmenities = new AmenimapsItem[10];
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+    private Geocoder geocoder;
     private GoogleApiClient client;
-
-    public double getLat() {
-        return lat;
-    }
-
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public double getLng() {
-        return lng;
-    }
-
-    public void setLng(double lng) {
-        this.lng = lng;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        geocoder = new Geocoder(this);
         btnFindPath = (Button) findViewById(R.id.btnFindPath);
         btnMeteo = (Button) findViewById(R.id.btnMeteo);
         final Spinner amenimapSpinner = (Spinner) findViewById(R.id.spinnerAmenimaps);
@@ -143,14 +126,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                JSONAmenimapsTask task = new JSONAmenimapsTask();
+                //JSONAmenimapsTask task = new JSONAmenimapsTask();
                 String url_adress;
 
                 if (pos > 0) {
                     SpinnerValue = amenimapSpinner.getSelectedItem().toString();
-                    url_adress = "http://amenimaps.com/amenimapi.php?amenity=" + SpinnerValue + "&mylat=50.8504500&mylon=4.3487800&mode=json&name=ruky91&key=cfee105e7cddd0a5563057b9a547dcc5";
-                    task.execute(new String[]{url_adress});
-
+                    //url_adress = "http://amenimaps.com/amenimapi.php?amenity=" + SpinnerValue + "&mylat=50.8504500&mylon=4.3487800&mode=json&name=ruky91&key=cfee105e7cddd0a5563057b9a547dcc5";
+                    //task.execute(new String[]{url_adress});
+                    switch (SpinnerValue) {
+                        case "toilette" :
+                            try {
+                                addMarkerToilet();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "atm"  :
+                            try {
+                                addMarkerAtm();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "banque"   :
+                            try {
+                                addMarkerBanque();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "parking"  :
+                            try {
+                                addMarkerParking();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 } else {
                     Context context = getApplicationContext();
                     CharSequence text = "Veuillez choisir un objet valide...";
@@ -166,15 +180,83 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+    private String getAdresseLocation (double latG, double lngG) throws IOException {
+        StringBuffer info = null;
+        List<Address> addresses = null;
+        Address address;
+        String adressText = "";
+        addresses = geocoder.getFromLocation(latG,lngG, 1);
+        address = addresses.get(0);
+        adressText = String.format("%s, %s",
+                address.getMaxAddressLineIndex() > 0 ? address.getAddressLine(0) : "",
+                address.getLocality());
+        info = new StringBuffer(adressText);
+        return info.toString();
+    }
+
+    private void addMarkerToilet() throws IOException {
+        AmenitiesToilet amenitiesT = new AmenitiesToilet();
+        for (int i = 0; i<amenitiesT.size(); i++) {
+            mMap.addMarker(new MarkerOptions()
+                    .title("WC Public : "+getAdresseLocation(amenitiesT.get(i).getLat(), amenitiesT.get(i).getLng()))
+                    .position(new LatLng(amenitiesT.get(i).getLat(), amenitiesT.get(i).getLng()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.toilet)));
+        }
+
+    }
+
+    private void addMarkerAtm() throws IOException {
+        AmenitiesAtm amenitiesT = new AmenitiesAtm();
+        for (int i = 0; i<amenitiesT.size(); i++) {
+            mMap.addMarker(new MarkerOptions()
+                    .title("ATM : " +getAdresseLocation(amenitiesT.get(i).getLat(), amenitiesT.get(i).getLng()))
+                    .position(new LatLng(amenitiesT.get(i).getLat(), amenitiesT.get(i).getLng()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.atm)));
+        }
+
+    }
+
+    private void addMarkerBanque() throws IOException {
+        AmenitiesBank amenitiesT = new AmenitiesBank();
+        for (int i = 0; i<amenitiesT.size(); i++) {
+            mMap.addMarker(new MarkerOptions()
+                    .title("Banque : " +getAdresseLocation(amenitiesT.get(i).getLat(), amenitiesT.get(i).getLng()))
+                    .position(new LatLng(amenitiesT.get(i).getLat(), amenitiesT.get(i).getLng()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.bank1)));
+        }
+
+    }
+
+    private void addMarkerParking() throws IOException {
+        AmenitiesParking amenitiesT = new AmenitiesParking();
+        for (int i = 0; i<amenitiesT.size(); i++) {
+            mMap.addMarker(new MarkerOptions()
+                    .title("Parking : " +getAdresseLocation(amenitiesT.get(i).getLat(), amenitiesT.get(i).getLng()))
+                    .position(new LatLng(amenitiesT.get(i).getLat(), amenitiesT.get(i).getLng()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.parking)));
+        }
+
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
                 .setName("Maps Page") // TODO: Define a title for the content shown.
@@ -331,9 +413,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         LatLng hcmus = new LatLng(this.getLat(), this.getLng());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hcmus, 10));
-        originMarkers.add(mMap.addMarker(new MarkerOptions()
-                .title("Votre position")
-                .position(hcmus)));
+        try {
+            originMarkers.add(mMap.addMarker(new MarkerOptions()
+                    .title("Votre position : " +getAdresseLocation(this.getLat(), this.getLng()))
+                    .position(hcmus)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -348,6 +434,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
         Toast.makeText(this, "Localité actuelle : " + curLocality, Toast.LENGTH_LONG).show();
+        System.out.println(this.getLat() +"," +this.getLng());
     }
 
     @Override
@@ -373,7 +460,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
     @Override
     public void onDirectionFinderSuccess(List<Route> routes) {
         progressDialog.dismiss();
