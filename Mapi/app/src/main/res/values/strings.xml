@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">GoogleMapDemo</string>
-    <string name="title_activity_maps">MapiGit</string>
+    <string name="app_name">MAPI</string>
+    <string name="title_activity_maps">Mapi</string>
     <string-array name="choicelist">
         <item>Je cherche...</item>
         <item>toilette</item>

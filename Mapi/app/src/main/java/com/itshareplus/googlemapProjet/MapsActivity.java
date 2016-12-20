@@ -170,7 +170,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     CharSequence text = "Veuillez choisir un objet valide...";
                     int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
+                    //toast.show();
                 }
             }
 
@@ -413,13 +413,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         LatLng hcmus = new LatLng(this.getLat(), this.getLng());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hcmus, 10));
-        try {
+
             originMarkers.add(mMap.addMarker(new MarkerOptions()
-                    .title("Votre position : " +getAdresseLocation(this.getLat(), this.getLng()))
+                    .title("Votre position")
                     .position(hcmus)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -433,8 +431,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         mMap.setMyLocationEnabled(true);
-        Toast.makeText(this, "Localité actuelle : " + curLocality, Toast.LENGTH_LONG).show();
-        System.out.println(this.getLat() +"," +this.getLng());
+        //Toast.makeText(this, "Localité actuelle : " + curLocality, Toast.LENGTH_LONG).show();
+        //System.out.println(this.getLat() +"," +this.getLng());
     }
 
     @Override

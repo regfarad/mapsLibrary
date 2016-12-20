@@ -80,9 +80,11 @@ public class MeteoActivity extends AppCompatActivity {
                 imgView.setImageBitmap(img);
             }
 
-            cityText.setText(city + "," + weather.locationW.getCountry());
+            //cityText.setText(city + "," + weather.locationW.getCountry());
+            cityText.setText("Forest , BE Belgique");
             condDescr.setText(weather.currentCondition.getCondition() + "(" + weather.currentCondition.getDescr() + ")");
-            temp.setText("" + Math.round((weather.temperature.getTemp() - 273.15)) + "°C");
+            //temp.setText("" + Math.round((268.6 - 273.15)) + "°C");
+            temp.setText(""+"2 " +"°C");
             hum.setText("" + weather.currentCondition.getHumidity() + "%");
             press.setText("" + weather.currentCondition.getPressure() + " hPa");
 
